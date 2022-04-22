@@ -41,11 +41,11 @@ class TestAddContact(unittest.TestCase):
         wd.find_element(by=By.NAME, value="address").clear()
         wd.find_element(by=By.NAME, value="address").send_keys(contact.address)
         wd.find_element(by=By.NAME, value="home").clear()
-        wd.find_element(by=By.NAME, value="home").send_keys(contact.home)
+        wd.find_element(by=By.NAME, value="home").send_keys(contact.home_telephone)
         wd.find_element(by=By.NAME, value="mobile").clear()
-        wd.find_element(by=By.NAME, value="mobile").send_keys(contact.mobile)
+        wd.find_element(by=By.NAME, value="mobile").send_keys(contact.mobile_telephone)
         wd.find_element(by=By.NAME, value="work").clear()
-        wd.find_element(by=By.NAME, value="work").send_keys(contact.work)
+        wd.find_element(by=By.NAME, value="work").send_keys(contact.work_telephone)
         wd.find_element(by=By.NAME, value="fax").clear()
         wd.find_element(by=By.NAME, value="fax").send_keys(contact.fax)
         wd.find_element(by=By.NAME, value="email").clear()
@@ -59,7 +59,7 @@ class TestAddContact(unittest.TestCase):
         wd.find_element(by=By.NAME, value="address2").clear()
         wd.find_element(by=By.NAME, value="address2").send_keys(contact.address2)
         wd.find_element(by=By.NAME, value="phone2").clear()
-        wd.find_element(by=By.NAME, value="phone2").send_keys(contact.phone2)
+        wd.find_element(by=By.NAME, value="phone2").send_keys(contact.phone_home_secondary)
         wd.find_element(by=By.NAME, value="notes").clear()
         wd.find_element(by=By.NAME, value="notes").send_keys(contact.notes)
         # Submit contact creation
@@ -77,9 +77,10 @@ class TestAddContact(unittest.TestCase):
         self.login(wd, username="admin", password="secret")
         self.open_contact_page(wd)
         self.create_contact(wd, Contact(firstname="234", middlename="123", lastname="qwer", nickname="asdf",
-                            title="zxczv", company="erty", address="dfgh", home="xcvb", mobile="tyui", work="ghj",
-                            fax="mnbv", email="[iop", email2="jhkl", email3="uiop", homepage="bnm,", address2="5t5t5",
-                            phone2="tgtgt", notes="vfvfv"))
+                            title="zxczv", company="erty", address="dfgh", home_telephone="xcvb",
+                            mobile_telephone="tyui", work_telephone="ghj", fax="mnbv", email="[iop", email2="jhkl",
+                            email3="uiop", homepage="bnm,", address_secondary="5t5t5", phone_home_secondary="tgtgt",
+                            notes="vfvfv"))
         self.return_to_contact_page(wd)
         self.logout(wd)
 
@@ -88,10 +89,9 @@ class TestAddContact(unittest.TestCase):
         self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
         self.open_contact_page(wd)
-        self.create_contact(wd, Contact(firstname="", middlename="", lastname="", nickname="", title="",
-                            company="", address="", home="", mobile="", work="", fax="",
-                            email="", email2="", email3="", homepage="", address2="",
-                            phone2="", notes=""))
+        self.create_contact(wd, Contact(firstname="", middlename="", lastname="", nickname="", title="", company="",
+                            address="", home_telephone="", mobile_telephone="", work_telephone="", fax="", email="",
+                            email2="", email3="", homepage="", address_secondary="", phone_home_secondary="", notes=""))
         self.return_to_contact_page(wd)
         self.logout(wd)
 
