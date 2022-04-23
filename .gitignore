@@ -130,3 +130,4 @@ dmypy.json
 
 #Logs of geckodriver
 geckodriver.log
+temp_script.py
