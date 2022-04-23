@@ -130,5 +130,5 @@ dmypy.json
 
 #Logs of geckodriver
 geckodriver.log
-#Temprorary python files for study
+#Temprorary python files for study's
 temp_script.py
