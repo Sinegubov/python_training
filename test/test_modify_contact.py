@@ -2,13 +2,9 @@
 from model.contact import Contact
 
 
-def test_mod_contact(app):
-    app.session.login(username="admin", password="secret")
+def test_modify_contact_firstname(app):
     app.contact.modify_first_contact(Contact(firstname="New FirstName"))
-    app.session.logout()
 
 
-def test_mod_contact(app):
-    app.session.login(username="admin", password="secret")
+def test_modify_contact_company(app):
     app.contact.modify_first_contact(Contact(company="New CompanyName"))
-    app.session.logout()
