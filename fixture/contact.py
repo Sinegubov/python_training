@@ -8,8 +8,8 @@ class ContactHelper:
 
     def open_contact_page(self):
         wd = self.app.wd
-        # Open page for add address book entry
-        wd.find_element(by=By.LINK_TEXT, value="add new").click()
+        if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements(by=By.NAME, value="submit")) > 0):
+            wd.find_element(by=By.LINK_TEXT, value="add new").click()
 
     def fill_contact_form(self, contact):
         self.change_field_value("firstname", contact.firstname)
@@ -49,7 +49,8 @@ class ContactHelper:
 
     def return_to_contact_page(self):
         wd = self.app.wd
-        wd.find_element(by=By.LINK_TEXT, value="home").click()
+        if not (wd.current_url.endswith("/index.php") and wd.find_elements(by=By.NAME, value="Send e-Mail")):
+            wd.find_element(by=By.LINK_TEXT, value="home").click()
 
     def delete_first_contact(self):
         wd = self.app.wd
