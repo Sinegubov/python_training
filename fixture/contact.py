@@ -74,3 +74,8 @@ class ContactHelper:
         # Submit update button for contact
         wd.find_element(by=By.NAME, value="update").click()
         self.return_to_contact_page()
+
+    def count(self):
+        wd = self.app.wd
+        self.return_to_contact_page()
+        return len(wd.find_elements(by=By.NAME, value="selected[]"))

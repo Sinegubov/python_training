@@ -60,3 +60,8 @@ class GroupHelper:
         # Submit modification
         wd.find_element(by=By.NAME, value="update").click()
         self.return_to_groups_page()
+
+    def count(self):
+        wd = self.app.wd
+        self.open_groups_page()
+        return len(wd.find_elements(by=By.NAME, value="selected[]"))
