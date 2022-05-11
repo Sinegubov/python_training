@@ -47,6 +47,7 @@ class ContactHelper:
         # Submit contact creation
         wd.find_element(by=By.NAME, value="submit").click()
         self.return_to_contact_page()
+        self.contact_cache = None
 
     def return_to_contact_page(self):
         wd = self.app.wd
@@ -61,6 +62,7 @@ class ContactHelper:
         wd.find_element(by=By.XPATH, value="//input[@value='Delete']").click()
         wd.switch_to.alert.accept()
         self.return_to_contact_page()
+        self.contact_cache = None
 
     def select_first_contact(self):
         wd = self.app.wd
@@ -76,19 +78,23 @@ class ContactHelper:
         # Submit update button for contact
         wd.find_element(by=By.NAME, value="update").click()
         self.return_to_contact_page()
+        self.contact_cache = None
 
     def count(self):
         wd = self.app.wd
         self.return_to_contact_page()
         return len(wd.find_elements(by=By.NAME, value="selected[]"))
 
+    contact_cache = None
+
     def get_contact_list(self):
-        wd = self.app.wd
-        self.return_to_contact_page()
-        contacts = []
-        for element in wd.find_elements(by=By.NAME, value="entry"):
-            text_firstname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(3)").text
-            text_lasttname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(2)").text
-            id = element.find_element_by_name("selected[]").get_attribute("value")
-            contacts.append(Contact(firstname=text_firstname, lastname=text_lasttname, id=id))
-        return contacts
+        if self.contact_cache is None:
+            wd = self.app.wd
+            self.return_to_contact_page()
+            self.contact_cache = []
+            for element in wd.find_elements(by=By.NAME, value="entry"):
+                text_firstname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(3)").text
+                text_lasttname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(2)").text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                self.contact_cache.append(Contact(firstname=text_firstname, lastname=text_lasttname, id=id))
+        return list(self.contact_cache)
