@@ -16,6 +16,10 @@ def test_modify_contact_firstname(app):
 
 
 def test_modify_contact_company(app):
+    contact = Contact(company="New CompanyName")
     if app.contact.count() == 0:
         app.contact.create(Contact(company="Some test Name"))
-    app.contact.modify_first_contact(Contact(company="New CompanyName"))
+    old_contacts = app.contact.get_contact_list()
+    app.contact.modify_first_contact(contact)
+    new_contacts = app.contact.get_contact_list()
+    assert len(old_contacts) == len(new_contacts)
