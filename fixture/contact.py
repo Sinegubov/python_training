@@ -98,31 +98,18 @@ class ContactHelper:
         self.return_to_contact_page()
         return len(wd.find_elements(by=By.NAME, value="selected[]"))
 
-    def get_contact_list_for_phones(self):
+    def get_contact_list(self):
         if self.contact_cache is None:
             wd = self.app.wd
             self.app.open_home_page()
             self.contact_cache = []
             for element in wd.find_elements(by=By.NAME, value="entry"):
-                cells = element.find_elements(by=By.TAG_NAME, value="td")
-                firstname = cells[1].text
-                lasttname = cells[2].text
-                id = cells[0].find_element(by=By.TAG_NAME, value="input").get_attribute("value")
-                all_phones = cells[5].text
+                firstname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(3)").text
+                lasttname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(2)").text
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                all_phones = element.find_elements(by=By.TAG_NAME, value="td")[5].text
                 self.contact_cache.append(Contact(firstname=firstname, lastname=lasttname, id=id,
                                                   all_phones_from_home_page=all_phones))
-        return list(self.contact_cache)
-
-    def get_contact_list(self):
-        if self.contact_cache is None:
-            wd = self.app.wd
-            self.return_to_contact_page()
-            self.contact_cache = []
-            for element in wd.find_elements(by=By.NAME, value="entry"):
-                text_firstname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(3)").text
-                text_lasttname = element.find_element(by=By.CSS_SELECTOR, value="td:nth-child(2)").text
-                id = element.find_element_by_name("selected[]").get_attribute("value")
-                self.contact_cache.append(Contact(firstname=text_firstname, lastname=text_lasttname, id=id))
         return list(self.contact_cache)
 
     def open_contact_to_edit_by_index(self, index):
