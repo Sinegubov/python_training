@@ -146,8 +146,8 @@ class ContactHelper:
         email2 = wd.find_element(by=By.NAME, value="email2").get_attribute("value")
         email3 = wd.find_element(by=By.NAME, value="email3").get_attribute("value")
         homepage = wd.find_element(by=By.NAME, value="homepage").get_attribute("value")
-        address_secondary = wd.find_element(by=By.NAME, value="address2").get_attribute("value")
-        notes = wd.find_element(by=By.NAME, value="notes").get_attribute("value")
+        address_secondary = wd.find_element(by=By.XPATH, value="//textarea[@name='address2']").text
+        notes = wd.find_element(by=By.XPATH, value="//textarea[@name='notes']").text
         home_telephone = wd.find_element(by=By.NAME, value="home").get_attribute("value")
         mobile_telephone = wd.find_element(by=By.NAME, value="mobile").get_attribute("value")
         work_telephone = wd.find_element(by=By.NAME, value="work").get_attribute("value")
