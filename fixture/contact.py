@@ -169,3 +169,17 @@ class ContactHelper:
         return Contact(home_telephone=home_telephone,
                        mobile_telephone=mobile_telephone, work_telephone=work_telephone,
                        phone_home_secondary=phone_home_secondary)
+
+    def delete_contact_by_id(self, id):
+        wd = self.app.wd
+        self.return_to_contact_page()
+        self.select_contact_by_id(id)
+        # Submit deletion
+        wd.find_element(by=By.XPATH, value="//input[@value='Delete']").click()
+        wd.switch_to.alert.accept()
+        self.return_to_contact_page()
+        self.contact_cache = None
+
+    def select_contact_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element(by=By.CSS_SELECTOR, value="input[id='%s']" % id).click()
