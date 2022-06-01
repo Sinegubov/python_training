@@ -183,3 +183,16 @@ class ContactHelper:
     def select_contact_by_id(self, id):
         wd = self.app.wd
         wd.find_element(by=By.CSS_SELECTOR, value="input[id='%s']" % id).click()
+
+    def modify_contact_by_id(self, id, contact_s):
+        wd = self.app.wd
+        self.return_to_contact_page()
+        self.select_contact_by_id(id)
+        # Submit edit button for first contact
+        wd.find_element(by=By.XPATH, value="//img[@alt='Edit']").click()
+        # Fill contact form
+        self.fill_contact_form(contact_s)
+        # Submit update button for contact
+        wd.find_element(by=By.NAME, value="update").click()
+        self.return_to_contact_page()
+        self.contact_cache = None
