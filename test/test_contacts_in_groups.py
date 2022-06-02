@@ -13,11 +13,15 @@ def test_add_contact_to_group(app, db):
     contact = random.choice(contacts_in_db)
     app.contact.select_contact_by_id(contact.id)
     app.group.select_group_select(group)
-    contacts_in_group_db = ORMFixture.get_contacts_in_group(group)
+    contacts_in_group_db = ORMFixture.get_contacts_in_group(groups_in_db)
     assert (contact in contacts_in_group_db)
 
 
-
+# def test_add_contact_to_group(app):
+#     contact=app.contact.select_contact(0)
+#    app.group.select_group_from_dropdown(2)
+#    contacts_in_group_db = ORMFixture.get_contacts_in_group()
+#    assert(contact in contacts_in_group_db)
 
 
 #def test_add_contact_to_group(app, db):

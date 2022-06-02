@@ -23,7 +23,7 @@ class ORMFixture:
         id = PrimaryKey(int, column='id')
         firstname = Optional(str, column='firstname')
         lastname = Optional(str, column='lastname')
-        deprecated = Optional(datetime, column='deprecated')
+        deprecated = Optional(str, column='deprecated')
         groups = Set(lambda: ORMFixture.ORMGroup, table='address_in_groups', column='group_id', reverse='contacts',
                      lazy=True)
 
@@ -51,8 +51,8 @@ class ORMFixture:
         return self.convert_contacts_to_model(select(c for c in ORMFixture.ORMContact if c.deprecated is None))
 
     @db_session
-    def get_contacts_in_group(self, group):
-        orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == group.id))[0]
+    def get_contacts_in_group(self, groups_in_db):
+        orm_group = list(select(g for g in ORMFixture.ORMGroup if g.id == groups_in_db.id))[0]
         return self.convert_contacts_to_model(orm_group.contacts)
 
     @db_session
