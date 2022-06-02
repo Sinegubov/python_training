@@ -16,6 +16,7 @@ def test_modify_group_name(app, db, check_ui):
         assert sorted(new_groups, key=Group.id_or_max) == \
                sorted(app.group.get_contact_list(), key=Group.id_or_max)
 
+
 def test_modify_group_header(app, db, check_ui):
     group_s = Group(header="test")
     if len(db.get_group_list()) == 0:
@@ -28,6 +29,7 @@ def test_modify_group_header(app, db, check_ui):
     if check_ui:
         assert sorted(new_groups, key=Group.id_or_max) == \
                sorted(app.group.get_contact_list(), key=Group.id_or_max)
+
 
 def test_modify_group_footer(app, db, check_ui):
     group_s = Group(footer="test")

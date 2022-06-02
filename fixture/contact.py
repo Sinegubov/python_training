@@ -162,10 +162,22 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contact_view_page_by_index(index)
         text = wd.find_element(by=By.ID, value="content").text
-        home_telephone = re.search("H: (.*)", text).group(1)
-        mobile_telephone = re.search("M: (.*)", text).group(1)
-        work_telephone = re.search("W: (.*)", text).group(1)
-        phone_home_secondary = re.search("P: (.*)", text).group(1)
+        try:
+            home_telephone = re.search("H: (.*)", text).strip().group(1)
+        except:
+            home_telephone = None
+        try:
+            mobile_telephone = re.search("M: (.*)", text).strip().group(1)
+        except:
+            mobile_telephone = None
+        try:
+            work_telephone = re.search("W: (.*)", text).strip().group(1)
+        except:
+            work_telephone = None
+        try:
+            phone_home_secondary = re.search("P: (.*)", text).strip().group(1)
+        except:
+            phone_home_secondary = None
         return Contact(home_telephone=home_telephone,
                        mobile_telephone=mobile_telephone, work_telephone=work_telephone,
                        phone_home_secondary=phone_home_secondary)
