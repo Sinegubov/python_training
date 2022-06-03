@@ -105,12 +105,12 @@ class ContactHelper:
             self.app.open_home_page()
             self.contact_cache = []
             for element in wd.find_elements(by=By.XPATH, value="//tr[position() >1]"):
-                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text
-                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text
-                address = element.find_element(by=By.XPATH, value=".//td[4]").text
+                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text.strip()
+                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text.strip()
+                address = element.find_element(by=By.XPATH, value=".//td[4]").text.strip()
                 id = element.find_element(by=By.XPATH, value=".//td/input[@type='checkbox']").get_attribute("value")
-                all_phones = element.find_element(by=By.XPATH, value=".//td[6]").text
-                all_email = element.find_element(by=By.XPATH, value=".//td[5]").text
+                all_phones = element.find_element(by=By.XPATH, value=".//td[6]").text.strip()
+                all_email = element.find_element(by=By.XPATH, value=".//td[5]").text.strip()
                 self.contact_cache.append(Contact(firstname=firstname, lastname=lastname, id=id, address=address,
                                                   all_phones_from_home_page=all_phones,
                                                   all_email_from_home_page=all_email))
@@ -163,22 +163,10 @@ class ContactHelper:
         wd = self.app.wd
         self.open_contact_view_page_by_index(index)
         text = wd.find_element(by=By.ID, value="content").text
-        try:
-            home_telephone = re.search("H: (.*)", text).strip().group(1)
-        except:
-            home_telephone = None
-        try:
-            mobile_telephone = re.search("M: (.*)", text).strip().group(1)
-        except:
-            mobile_telephone = None
-        try:
-            work_telephone = re.search("W: (.*)", text).strip().group(1)
-        except:
-            work_telephone = None
-        try:
-            phone_home_secondary = re.search("P: (.*)", text).strip().group(1)
-        except:
-            phone_home_secondary = None
+        home_telephone = re.search("H: (.*)", text).group(1)
+        mobile_telephone = re.search("M: (.*)", text).group(1)
+        work_telephone = re.search("W: (.*)", text).group(1)
+        phone_home_secondary = re.search("P: (.*)", text).group(1)
         return Contact(home_telephone=home_telephone,
                        mobile_telephone=mobile_telephone, work_telephone=work_telephone,
                        phone_home_secondary=phone_home_secondary)
