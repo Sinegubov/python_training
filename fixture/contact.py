@@ -201,8 +201,8 @@ class ContactHelper:
         wd = self.app.wd
         self.return_to_contact_page()
         self.select_contact_by_id(id)
-        # Submit edit button for first contact
-        wd.find_element(by=By.XPATH, value="//img[@alt='Edit']").click()
+        # Submit edit button for random contact
+        wd.find_element(by=By.XPATH, value="//td/a[contains(@href, '%s')]/img[@title='Edit']" % id).click()
         # Fill contact form
         self.fill_contact_form(contact_s)
         # Submit update button for contact
