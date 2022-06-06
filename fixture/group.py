@@ -13,6 +13,11 @@ class GroupHelper:
         if not (wd.current_url.endswith("/group.php") and len(wd.find_elements(by=By.NAME, value="new")) > 0):
             wd.find_element(by=By.LINK_TEXT, value="groups").click()
 
+    def return_to_groups_page(self):
+        wd = self.app.wd
+        if not (wd.current_url.endswith("/group.php") and len(wd.find_elements(by=By.NAME, value="new")) > 0):
+            wd.find_element(by=By.LINK_TEXT, value="group page").click()
+
     def fill_group_form(self, group):
         self.change_field_value("group_name", group.name)
         self.change_field_value("group_header", group.header)
@@ -37,11 +42,6 @@ class GroupHelper:
         self.return_to_groups_page()
         self.group_cache = None
 
-    def return_to_groups_page(self):
-        wd = self.app.wd
-        if not (wd.current_url.endswith("/group.php") and len(wd.find_elements(by=By.NAME, value="new")) > 0):
-            wd.find_element(by=By.LINK_TEXT, value="group page").click()
-
     def delete_first_group(self):
         self.delete_group_by_index(0)
 
@@ -49,6 +49,15 @@ class GroupHelper:
         wd = self.app.wd
         self.open_groups_page()
         self.select_group_by_index(index)
+        # Submit deletion
+        wd.find_element(by=By.NAME, value="delete").click()
+        self.return_to_groups_page()
+        self.group_cache = None
+
+    def delete_group_by_id(self, id):
+        wd = self.app.wd
+        self.open_groups_page()
+        self.select_group_by_id(id)
         # Submit deletion
         wd.find_element(by=By.NAME, value="delete").click()
         self.return_to_groups_page()
@@ -62,6 +71,24 @@ class GroupHelper:
         wd = self.app.wd
         wd.find_elements(by=By.NAME, value="selected[]")[index].click()
 
+    def select_group_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element(by=By.CSS_SELECTOR, value="input[value='%s']" % id).click()
+
+    def select_group_select(self, group):
+        wd = self.app.wd
+        Select(wd.find_element(by=By.TAG_NAME, value="select")).select_by_value(group)
+        wd.find_element(by=By.NAME, value="add").click()
+        wd.find_element(by=By.LINK_TEXT, value="home").click()
+
+    def select_group_from_upper_dropdown(self, index):
+        wd = self.app.wd
+        groups = self.get_group_list()
+        group_id = groups[index].id
+        wd.find_element_by_name("group").click()
+        wd.select.select_by_value(group_id)
+        wd.find_element_by_link_text("home").click()
+
     def modify_first_group(self):
         self.modify_group_by_index(0)
 
@@ -69,6 +96,19 @@ class GroupHelper:
         wd = self.app.wd
         self.open_groups_page()
         self.select_group_by_index(index)
+        # Open modification form
+        wd.find_element(by=By.NAME, value="edit").click()
+        # Fill group form
+        self.fill_group_form(new_group_data)
+        # Submit modification
+        wd.find_element(by=By.NAME, value="update").click()
+        self.return_to_groups_page()
+        self.group_cache = None
+
+    def modify_group_by_id(self, id, new_group_data):
+        wd = self.app.wd
+        self.open_groups_page()
+        self.select_group_by_id(id)
         # Open modification form
         wd.find_element(by=By.NAME, value="edit").click()
         # Fill group form
@@ -95,43 +135,3 @@ class GroupHelper:
                 id = element.find_element_by_name("selected[]").get_attribute("value")
                 self.group_cache.append(Group(name=text, id=id))
         return list(self.group_cache)
-
-    def delete_group_by_id(self, id):
-        wd = self.app.wd
-        self.open_groups_page()
-        self.select_group_by_id(id)
-        # Submit deletion
-        wd.find_element(by=By.NAME, value="delete").click()
-        self.return_to_groups_page()
-        self.group_cache = None
-
-    def select_group_by_id(self, id):
-        wd = self.app.wd
-        wd.find_element(by=By.CSS_SELECTOR, value="input[value='%s']" % id).click()
-
-    def modify_group_by_id(self, id, group_s):
-        wd = self.app.wd
-        self.open_groups_page()
-        self.select_group_by_id(id)
-        # Open modification form
-        wd.find_element(by=By.NAME, value="edit").click()
-        # Fill group form
-        self.fill_group_form(group_s)
-        # Submit modification
-        wd.find_element(by=By.NAME, value="update").click()
-        self.return_to_groups_page()
-        self.group_cache = None
-
-    def select_group_select(self, group):
-        wd = self.app.wd
-        Select(wd.find_element(by=By.TAG_NAME, value="select")).select_by_value(group)
-        wd.find_element(by=By.NAME, value="add").click()
-        wd.find_element(by=By.LINK_TEXT, value="home").click()
-
-    def select_group_from_upper_dropdown(self, index):
-        wd = self.app.wd
-        groups = self.get_group_list()
-        group_id = groups[index].id
-        wd.find_element_by_name("group").click()
-        wd.select.select_by_value(group_id)
-        wd.find_element_by_link_text("home").click()

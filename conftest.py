@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from fixture.application import Application
+# from fixture.group import Group
+# from fixture.contact import Contact
 from fixture.db import DbFixture
 import pytest
 import jsonpickle
@@ -51,6 +54,24 @@ def stop(request):
     return fixture
 
 
+# @pytest.fixture
+# def group():
+#     return Group(name="name", header="header", footer="footer", id=str("id"))
+
+
+# @pytest.fixture
+# def contact():
+#     return Contact(firstname="firstname", lastname="lastname",
+#                    address="address", all_phones_from_home_page="all_phones_from_home_page",
+#                    all_email_from_home_page="all_email_from_home_page",
+#                    id=str("id"))
+
+
+@pytest.fixture
+def check_ui(request):
+    return request.config.getoption("--check_ui")
+
+
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="firefox")
     parser.addoption("--target", action="store", default="target.json")
@@ -76,7 +97,4 @@ def load_from_json(file):
         return jsonpickle.decode(f.read())
 
 
-@pytest.fixture
-def check_ui(request):
-    return request.config.getoption("--check_ui")
     

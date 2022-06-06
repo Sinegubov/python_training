@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
 from random import randrange
+from model.contact import Contact
 
 
 def test_contact_info_on_home_page(app):
+    if app.contact.count() == 0:
+        app.contact.create(Contact(firstname="name2", middlename="midd2", lastname="las2t", nickname="nick2",
+                                   title="T2", company="Apple2", address="Earth2", home_telephone="123321232",
+                                   mobile_telephone="34543452", work_telephone="56765672", fax="444444442",
+                                   email="asd@asd.ASd2", email2="qwe_ewq@w.w.w.2", email3="email2",
+                                   homepage="http://222.asd", address_secondary="MilkyWay2",
+                                   phone_home_secondary="8768678762", notes="zzzzyyy"))
     old_contacts = app.contact.get_contact_list()
     index = randrange(len(old_contacts))
     contact_from_home_page = app.contact.get_contact_list()[index]

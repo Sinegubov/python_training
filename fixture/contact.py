@@ -13,6 +13,25 @@ class ContactHelper:
         if not (wd.current_url.endswith("/edit.php") and len(wd.find_elements(by=By.NAME, value="submit")) > 0):
             wd.find_element(by=By.LINK_TEXT, value="add new").click()
 
+    def open_contact_to_edit_by_index(self, index):
+        wd = self.app.wd
+        self.app.open_home_page()
+        element = wd.find_elements(by=By.NAME, value="entry")[index]
+        cell = element.find_elements(by=By.TAG_NAME, value="td")[7]
+        cell.find_element(by=By.TAG_NAME, value="a").click()
+
+    def open_contact_view_page_by_index(self, index):
+        wd = self.app.wd
+        self.app.open_home_page()
+        element = wd.find_elements(by=By.NAME, value="entry")[index]
+        cell = element.find_elements(by=By.TAG_NAME, value="td")[7]
+        cell.find_element(by=By.TAG_NAME, value="a").click()
+
+    def return_to_contact_page(self):
+        wd = self.app.wd
+        if not (wd.current_url.endswith("/index.php") and wd.find_elements(by=By.NAME, value="Send e-Mail")):
+            wd.find_element(by=By.LINK_TEXT, value="home").click()
+
     def fill_contact_form(self, contact):
         self.change_field_value("firstname", contact.firstname)
         self.change_field_value("middlename", contact.middlename)
@@ -52,24 +71,6 @@ class ContactHelper:
         self.return_to_contact_page()
         self.contact_cache = None
 
-    def return_to_contact_page(self):
-        wd = self.app.wd
-        if not (wd.current_url.endswith("/index.php") and wd.find_elements(by=By.NAME, value="Send e-Mail")):
-            wd.find_element(by=By.LINK_TEXT, value="home").click()
-
-    def delete_first_contact(self):
-        self.delete_contact_by_index(0)
-
-    def delete_contact_by_index(self, index):
-        wd = self.app.wd
-        self.return_to_contact_page()
-        self.select_contact_by_index(index)
-        # Submit deletion
-        wd.find_element(by=By.XPATH, value="//input[@value='Delete']").click()
-        wd.switch_to.alert.accept()
-        self.return_to_contact_page()
-        self.contact_cache = None
-
     def select_first_contact(self):
         wd = self.app.wd
         self.open_contact_page()
@@ -79,16 +80,36 @@ class ContactHelper:
         wd = self.app.wd
         wd.find_elements(by=By.NAME, value="selected[]")[index].click()
 
+    def select_contact_by_id(self, id):
+        wd = self.app.wd
+        wd.find_element(by=By.CSS_SELECTOR, value="input[id='%s']" % id).click()
+
+    def modify_contact_by_id(self, id, contact):
+        wd = self.app.wd
+        self.return_to_contact_page()
+        self.select_contact_by_id(id)
+        # Submit edit button for random contact
+        wd.find_element(by=By.XPATH, value="//td/a[contains(@href, '%s')]/img[@title='Edit']" % id).click()
+        # Fill contact form
+        self.fill_contact_form(contact)
+        # Submit update button for contact
+        wd.find_element(by=By.NAME, value="update").click()
+        self.return_to_contact_page()
+        self.contact_cache = None
+
     def modify_first_contact(self):
         self.modify_contact_by_index(0)
 
-    def modify_contact_by_index(self, index, new_contact_data):
+    def modify_contact_by_index(self, index, contact):
         wd = self.app.wd
         self.return_to_contact_page()
+        self.select_contact_by_index(index)
         # Submit edit button for first contact
         wd.find_elements(by=By.XPATH, value="//img[@alt='Edit']")[index].click()
+        # select = wd.find_element_by_xpath("//tbody/tr/td/input[@id='%s']" % index)
+        # select.find_element_by_xpath("./../../td[8]").click()
         # Fill contact form
-        self.fill_contact_form(new_contact_data)
+        self.fill_contact_form(contact)
         # Submit update button for contact
         wd.find_element(by=By.NAME, value="update").click()
         self.return_to_contact_page()
@@ -102,34 +123,26 @@ class ContactHelper:
     def get_contact_list(self):
         if self.contact_cache is None:
             wd = self.app.wd
-            self.app.open_home_page()
+            # может и не надо так делать
+            #    self.app.open_home_page()
+            self.return_to_contact_page()
             self.contact_cache = []
             for element in wd.find_elements(by=By.XPATH, value="//tr[position() >1]"):
-                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text.strip()
-                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text.strip()
-                address = element.find_element(by=By.XPATH, value=".//td[4]").text.strip()
+                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text
+                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text
+                # address = element.find_element(by=By.XPATH, value=".//td[4]").text
                 id = element.find_element(by=By.XPATH, value=".//td/input[@type='checkbox']").get_attribute("value")
-                all_phones = element.find_element(by=By.XPATH, value=".//td[6]").text.strip()
-                all_email = element.find_element(by=By.XPATH, value=".//td[5]").text.strip()
+                # all_phones = element.find_element(by=By.XPATH, value=".//td[6]")
+                # all_email = element.find_element(by=By.XPATH, value=".//td[5]")
+                cells = element.find_elements_by_tag_name("td")
+                all_phones = cells[5].text
+                all_email = cells[4].text
+                address = cells[3].text
                 self.contact_cache.append(Contact(firstname=firstname, lastname=lastname, id=id, address=address,
                                                   all_phones_from_home_page=all_phones,
                                                   all_email_from_home_page=all_email))
 
         return list(self.contact_cache)
-
-    def open_contact_to_edit_by_index(self, index):
-        wd = self.app.wd
-        self.app.open_home_page()
-        element = wd.find_elements(by=By.NAME, value="entry")[index]
-        cell = element.find_elements(by=By.TAG_NAME, value="td")[7]
-        cell.find_element(by=By.TAG_NAME, value="a").click()
-
-    def open_contact_view_page_by_index(self, index):
-        wd = self.app.wd
-        self.app.open_home_page()
-        element = wd.find_elements(by=By.NAME, value="entry")[index]
-        cell = element.find_elements(by=By.TAG_NAME, value="td")[6]
-        cell.find_element(by=By.TAG_NAME, value="a").click()
 
     def get_contact_info_from_edit_page(self, index):
         wd = self.app.wd
@@ -137,27 +150,26 @@ class ContactHelper:
         firstname = wd.find_element(by=By.NAME, value="firstname").get_attribute("value")
         lastname = wd.find_element(by=By.NAME, value="lastname").get_attribute("value")
         id = wd.find_element(by=By.NAME, value="id").get_attribute("value")
-        middlename = wd.find_element(by=By.NAME, value="middlename").get_attribute("value")
-        nickname = wd.find_element(by=By.NAME, value="nickname").get_attribute("value")
-        title = wd.find_element(by=By.NAME, value="title").get_attribute("value")
-        company = wd.find_element(by=By.NAME, value="company").get_attribute("value")
-        address = wd.find_element(by=By.XPATH, value="//textarea[@name='address']").text
-        fax = wd.find_element(by=By.NAME, value="fax").get_attribute("value")
+        # middlename = wd.find_element(by=By.NAME, value="middlename").get_attribute("value")
+        # nickname = wd.find_element(by=By.NAME, value="nickname").get_attribute("value")
+        # title = wd.find_element(by=By.NAME, value="title").get_attribute("value")
+        # company = wd.find_element(by=By.NAME, value="company").get_attribute("value")
+        address = wd.find_element(by=By.NAME, value="address").get_attribute("value")
+        # fax = wd.find_element(by=By.NAME, value="fax").get_attribute("value")
         email = wd.find_element(by=By.NAME, value="email").get_attribute("value")
         email2 = wd.find_element(by=By.NAME, value="email2").get_attribute("value")
         email3 = wd.find_element(by=By.NAME, value="email3").get_attribute("value")
-        homepage = wd.find_element(by=By.NAME, value="homepage").get_attribute("value")
-        address_secondary = wd.find_element(by=By.XPATH, value="//textarea[@name='address2']").text
-        notes = wd.find_element(by=By.XPATH, value="//textarea[@name='notes']").text
+        # homepage = wd.find_element(by=By.NAME, value="homepage").get_attribute("value")
+        # address_secondary = wd.find_element(by=By.XPATH, value="//textarea[@name='address2']").text
+        # notes = wd.find_element(by=By.XPATH, value="//textarea[@name='notes']").text
         home_telephone = wd.find_element(by=By.NAME, value="home").get_attribute("value")
         mobile_telephone = wd.find_element(by=By.NAME, value="mobile").get_attribute("value")
         work_telephone = wd.find_element(by=By.NAME, value="work").get_attribute("value")
         phone_home_secondary = wd.find_element(by=By.NAME, value="phone2").get_attribute("value")
         return Contact(firstname=firstname, lastname=lastname, id=id, home_telephone=home_telephone,
                        mobile_telephone=mobile_telephone, work_telephone=work_telephone,
-                       phone_home_secondary=phone_home_secondary, middlename=middlename, nickname=nickname,
-                       title=title, company=company, address=address, fax=fax, email=email, email2=email2,
-                       email3=email3, homepage=homepage, address_secondary=address_secondary, notes=notes)
+                       phone_home_secondary=phone_home_secondary, address=address, email=email, email2=email2,
+                       email3=email3)
 
     def get_contact_from_view_page(self, index):
         wd = self.app.wd
@@ -181,19 +193,15 @@ class ContactHelper:
         self.return_to_contact_page()
         self.contact_cache = None
 
-    def select_contact_by_id(self, id):
-        wd = self.app.wd
-        wd.find_element(by=By.CSS_SELECTOR, value="input[id='%s']" % id).click()
+    def delete_first_contact(self):
+        self.delete_contact_by_index(0)
 
-    def modify_contact_by_id(self, id, contact_s):
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.return_to_contact_page()
-        self.select_contact_by_id(id)
-        # Submit edit button for random contact
-        wd.find_element(by=By.XPATH, value="//td/a[contains(@href, '%s')]/img[@title='Edit']" % id).click()
-        # Fill contact form
-        self.fill_contact_form(contact_s)
-        # Submit update button for contact
-        wd.find_element(by=By.NAME, value="update").click()
+        self.select_contact_by_index(index)
+        # Submit deletion
+        wd.find_element(by=By.XPATH, value="//input[@value='Delete']").click()
+        wd.switch_to.alert.accept()
         self.return_to_contact_page()
         self.contact_cache = None
