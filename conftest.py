@@ -3,6 +3,7 @@ from fixture.application import Application
 # from fixture.group import Group
 # from fixture.contact import Contact
 from fixture.db import DbFixture
+from fixture.orm import ORMFixture
 import pytest
 import jsonpickle
 import os.path
@@ -53,6 +54,13 @@ def stop(request):
     request.addfinalizer(fin)
     return fixture
 
+
+@pytest.fixture(scope='session')
+def orm(request):
+    orm_config = load_config(request.config.getoption('--target'))['db']
+    ormfixtute = ORMFixture(host=orm_config['host'], name=orm_config['name'], user=orm_config['user'],
+                            password=orm_config['password'])
+    return ormfixtute
 
 # @pytest.fixture
 # def group():

@@ -1,32 +1,31 @@
 # -*- coding: utf-8 -*-
-import random
-from fixture.orm import ORMFixture
+from model.contact import Contact
+from model.group import Group
 
 
-db = ORMFixture(host="127.0.0.1", name="addressbook", user="root", password="")
-
-
-#def test_add_contact_to_group(app, db):
-#    groups_in_db = db.get_group_list()
-#    group = str((random.choice(groups_in_db)).id)
-#    contacts_in_db = db.get_contact_list()
-#    contact = random.choice(contacts_in_db)
-#    app.contact.select_contact_by_id(contact.id)
-#    app.group.select_group_select(group)
-#    contacts_in_group_db = ORMFixture.get_contacts_in_group(groups_in_db)
-#    assert contact == len(contacts_in_group_db)
-
-
- #def test_add_contact_to_group(app):
- #   contact=app.contact.select_contact(0)
- #   app.group.select_group_from_dropdown(2)
- #   contacts_in_group_db = ORMFixture.get_contacts_in_group()
- #   assert(contact in contacts_in_group_db)
-
-
-#def test_add_contact_to_group(app, db):
-#    group_with_contacts = db.get_group_list()
-#    if len(group_with_contacts) == 0:
-#        app.contact.add_contact_to_group(contact.id)
-
-
+def test_add_contact_to_group(app, orm):
+    contact = None
+    add_to_group = None
+    all_groups = orm.get_group_list()
+    if len(all_groups) == 0:
+        app.group.create(Group(name="SomeName", header="SomeHeader", footer="SomeFooter"))
+        all_groups = orm.get_group_list()
+    for group in all_groups:
+        contacts = orm.get_contacts_not_in_group(group)
+        if len(contacts) > 0:
+            contact = contacts[0]
+            add_to_group = group
+            break
+    if contact is None:
+        app.contact.create(Contact(firstname="name1", middlename="middl", lastname="lasst", nickname="nick", title="T",
+                                   company="Apple", address="Earth", home_telephone="12332123",
+                                   mobile_telephone="3454345", work_telephone="5676567", fax="44444444",
+                                   email="asd@asd.ASd", email2="qwe_ewq@w.w.w.e", email3="email",
+                                   homepage="http://asd.asd", address_secondary="MilkyWay",
+                                   phone_home_secondary="876867876", notes="zzzz"))
+        contacts = sorted(orm.get_contact_list(), key=Contact.id_or_max)
+        contact = contacts[len(contacts)-1]
+    old_list_contacts = orm.get_contacts_in_group(add_to_group)
+    app.contact.add_contact_to_group(contact, add_to_group)
+    new_list_contacts = orm.get_contacts_in_group(add_to_group)
+    assert len(old_list_contacts) + 1 == len(new_list_contacts) and new_list_contacts.count(contact) == 1

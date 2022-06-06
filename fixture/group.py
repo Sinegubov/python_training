@@ -1,5 +1,4 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
 from model.group import Group
 
 
@@ -74,20 +73,6 @@ class GroupHelper:
     def select_group_by_id(self, id):
         wd = self.app.wd
         wd.find_element(by=By.CSS_SELECTOR, value="input[value='%s']" % id).click()
-
-    def select_group_select(self, group):
-        wd = self.app.wd
-        Select(wd.find_element(by=By.TAG_NAME, value="select")).select_by_value(group)
-        wd.find_element(by=By.NAME, value="add").click()
-        wd.find_element(by=By.LINK_TEXT, value="home").click()
-
-    def select_group_from_upper_dropdown(self, index):
-        wd = self.app.wd
-        groups = self.get_group_list()
-        group_id = groups[index].id
-        wd.find_element_by_name("group").click()
-        wd.select.select_by_value(group_id)
-        wd.find_element_by_link_text("home").click()
 
     def modify_first_group(self):
         self.modify_group_by_index(0)
