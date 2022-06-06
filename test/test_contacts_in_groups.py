@@ -47,7 +47,7 @@ def test_del_contact_from_group(app, orm):
             add_to_group = group
             break
     if contact is None and orm.get_contact_list() == 0:
-        app.contact.create(Contact(firstname="name1", middlename="middl", lastname="lasst", nickname="nick", title="T",
+        app.contact.create(Contact(firstname="name2", middlename="midd2", lastname="lasst", nickname="nick", title="T",
                            company="Apple", address="Earth", home_telephone="12332123",
                            mobile_telephone="3454345", work_telephone="5676567", fax="44444444",
                            email="asd@asd.ASd", email2="qwe_ewq@w.w.w.e", email3="email",
