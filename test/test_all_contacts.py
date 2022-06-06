@@ -7,6 +7,7 @@ def test_matches_contacts_on_db_and_homepage(app, db):
         app.contact.create(Contact(firstname="Some test Name", lastname="Some lastname new"))
     contacts_ui = sorted(app.contact.get_contact_list(), key=Contact.id_or_max)
     contacts_db = sorted(db.get_contact_list_full(), key=Contact.id_or_max)
+    assert sorted(contacts_ui, key=Contact.id_or_max) == sorted(contacts_db, key=Contact.id_or_max)
     for i in range(len(contacts_ui)):
         assert contacts_ui[i].lastname == contacts_db[i].lastname
         assert contacts_ui[i].firstname == contacts_db[i].firstname
