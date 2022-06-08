@@ -6,17 +6,12 @@ from model.group import Group
 
 def test_add_contact_to_group(app, orm):
     contact = None
-    add_to_group = None
+    # add_to_group = None
     all_groups = orm.get_group_list()
     if len(all_groups) == 0:
         app.group.create(Group(name="SomeName", header="SomeHeader", footer="SomeFooter"))
         all_groups = orm.get_group_list()
-    for group in all_groups:
-        contacts = orm.get_contacts_not_in_group(group)
-        if len(contacts) > 0:
-            contact = contacts[0]
-            add_to_group = group
-            break
+        group = all_groups[len(all_groups)-1]
     if contact is None:
         app.contact.create(Contact(firstname="name1", middlename="middl", lastname="lasst", nickname="nick", title="T",
                                    company="Apple", address="Earth", home_telephone="12332123",
@@ -26,6 +21,12 @@ def test_add_contact_to_group(app, orm):
                                    phone_home_secondary="876867876", notes="zzzz"))
         contacts = sorted(orm.get_contact_list(), key=Contact.id_or_max)
         contact = contacts[len(contacts)-1]
+    for group in all_groups:
+        contacts = orm.get_contacts_not_in_group(group)
+        if len(contacts) > 0:
+            contact = contacts[0]
+            add_to_group = group
+            break
     old_list_contacts = orm.get_contacts_in_group(add_to_group)
     app.contact.add_contact_to_group(contact, add_to_group)
     new_list_contacts = orm.get_contacts_in_group(add_to_group)
@@ -34,7 +35,7 @@ def test_add_contact_to_group(app, orm):
 
 def test_del_contact_from_group(app, orm):
     contact = None
-    add_to_group = None
+    # add_to_group = None
     all_groups = orm.get_group_list()
     if len(all_groups) == 0:
         app.group.create(Group(name="SomeName", header="SomeHeader", footer="SomeFooter"))
