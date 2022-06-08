@@ -8,20 +8,15 @@ from model.contact import Contact
 def test_add_contact_to_group(app, orm):
     contact = None
     all_groups = orm.get_group_list()
+    all_contacts = orm.get_contact_list()
     if len(all_groups) == 0:
         app.group.create(data.groups.testdata[0])
         all_groups = orm.get_group_list()
-        # group = all_groups[len(all_groups)-1]
-    if contact is None:
+    if len(all_contacts) == 0:
         app.contact.create(data.contact.testdata[0])
         contacts = sorted(orm.get_contact_list(), key=Contact.id_or_max)
         contact = contacts[len(contacts)-1]
-    for group in all_groups:
-        contacts = orm.get_contacts_not_in_group(group)
-        if len(contacts) > 0:
-            contact = contacts[0]
-            add_to_group = group
-            break
+    add_to_group, contact = orm.group_not_in_groups(all_groups, contact)
     old_list_contacts = orm.get_contacts_in_group(add_to_group)
     app.contact.add_contact_to_group(contact, add_to_group)
     new_list_contacts = orm.get_contacts_in_group(add_to_group)
@@ -35,12 +30,7 @@ def test_del_contact_from_group(app, orm):
         app.group.create(data.groups.testdata[1])
         app.contact.add_contact_to_group(random.choice(orm.get_contact_list()), random.choice(orm.get_group_list()))
         all_groups = orm.get_group_list()
-    for group in all_groups:
-        contacts = orm.get_contacts_in_group(group)
-        if len(contacts) > 0:
-            contact = contacts[0]
-            add_to_group = group
-            break
+    add_to_group, contact = orm.group_in_groups(all_groups, contact)
     if contact is None and orm.get_contact_list() == 0:
         app.contact.create(data.contact.testdata[1])
         contact = orm.get_contact_list()[0]
