@@ -133,13 +133,12 @@ class ContactHelper:
             self.return_to_contact_page()
             self.contact_cache = []
             for element in wd.find_elements(by=By.XPATH, value="//tr[position() >1]"):
-                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text
-                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text
+                firstname = element.find_element(by=By.XPATH, value=".//td[3]").text.strip()
+                lastname = element.find_element(by=By.XPATH, value=".//td[2]").text.strip()
+                address = element.find_element(by=By.XPATH, value=".//td[4]").text.strip()
                 id = element.find_element(by=By.XPATH, value=".//td/input[@type='checkbox']").get_attribute("value")
-                cells = element.find_elements_by_tag_name("td")
-                all_phones = cells[5].text
-                all_email = cells[4].text
-                address = cells[3].text
+                all_phones = element.find_element(by=By.XPATH, value=".//td[6]").text.strip()
+                all_email = element.find_element(by=By.XPATH, value=".//td[5]").text.strip()
                 self.contact_cache.append(Contact(firstname=firstname, lastname=lastname, id=id, address=address,
                                                   all_phones_from_home_page=all_phones,
                                                   all_email_from_home_page=all_email))
