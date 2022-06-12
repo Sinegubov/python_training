@@ -1,8 +1,9 @@
 from pony.orm import *
 from datetime import datetime
-from model.group import Group
-from model.contact import Contact
 
+import fixture.contact
+from model.group import Group
+from fixture.contact import Contact
 
 class ORMFixture:
 
@@ -68,6 +69,9 @@ class ORMFixture:
                 contact = contacts[0]
                 add_to_group = group
                 break
+            else:
+                contact = fixture.contact.ContactHelper.
+                add_to_group = group
         return add_to_group, contact
 
     @db_session
