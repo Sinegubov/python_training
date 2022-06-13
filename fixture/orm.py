@@ -70,8 +70,7 @@ class ORMFixture:
                 add_to_group = group
                 break
             else:
-                contact = fixture.contact.ContactHelper.
-                add_to_group = group
+                pass
         return add_to_group, contact
 
     @db_session

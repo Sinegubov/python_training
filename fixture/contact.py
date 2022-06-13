@@ -122,9 +122,6 @@ class ContactHelper:
         self.return_to_contact_page()
         self.contact_cache = None
 
-xpath=//table[@id='maintable']/tbody/tr[8]/td[8]/a/img
-
-
     def modify_contact_by_id(self, id, contact_s):
         wd = self.app.wd
         self.return_to_contact_page()
