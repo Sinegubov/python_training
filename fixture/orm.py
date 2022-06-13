@@ -68,9 +68,9 @@ class ORMFixture:
             if len(contacts) > 0:
                 contact = contacts[0]
                 add_to_group = group
-                break
             else:
-                pass
+                contact = None
+                add_to_group = None
         return add_to_group, contact
 
     @db_session
