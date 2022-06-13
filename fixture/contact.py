@@ -122,6 +122,22 @@ class ContactHelper:
         self.return_to_contact_page()
         self.contact_cache = None
 
+xpath=//table[@id='maintable']/tbody/tr[8]/td[8]/a/img
+
+
+    def modify_contact_by_id(self, id, contact_s):
+        wd = self.app.wd
+        self.return_to_contact_page()
+        self.select_contact_by_id(id)
+        # Submit edit button for first contact
+        wd.find_element(by=By.XPATH, value="//img[@alt='Edit']").click()
+        # Fill contact form
+        self.fill_contact_form(contact_s)
+        # Submit update button for contact
+        wd.find_element(by=By.NAME, value="update").click()
+        self.return_to_contact_page()
+        self.contact_cache = None
+
     def count(self):
         wd = self.app.wd
         self.return_to_contact_page()

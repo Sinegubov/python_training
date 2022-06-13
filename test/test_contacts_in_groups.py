@@ -16,6 +16,10 @@ def test_add_contact_to_group(app, orm):
         app.contact.create(data.contact.testdata[0])
         contacts = sorted(orm.get_contact_list(), key=Contact.id_or_max)
         contact = contacts[len(contacts)-1]
+    if sorted(orm.get_contacts_in_group(), key=Contact.id_or_max) == \
+            sorted(all_contacts, key=Contact.id_or_max):
+        app.group.create(data.groups.testdata[1])
+        all_groups = orm.get_group_list()
     add_to_group, contact = orm.group_not_in_groups(all_groups, contact)
     old_list_contacts = orm.get_contacts_in_group(add_to_group)
     app.contact.add_contact_to_group(contact, add_to_group)
