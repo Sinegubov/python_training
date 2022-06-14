@@ -58,7 +58,7 @@ def test_del_contact_from_group(app, db, orm):
                 app.contact.create(data.contact.testdata[0])
                 contact = db.get_contact_list()[-1]
                 app.contact.add_contact_to_group(contact, group)
-    contact = random.choice(list(db_contacts_in_group))
+    # contact = random.choice(db_contacts_in_group)
     old_list_contacts = orm.get_contacts_in_group(group)
     app.contact.del_contact_from_group(contact, group)
     new_list_contacts = orm.get_contacts_in_group(group)
