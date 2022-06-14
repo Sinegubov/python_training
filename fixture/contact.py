@@ -212,11 +212,11 @@ class ContactHelper:
         self.return_to_contact_page()
         self.contact_cache = None
 
-    def del_contact_from_group(self, contact, add_to_group):
+    def del_contact_from_group(self, contact, group):
         wd = self.app.wd
         self.return_to_contact_page()
-        wd.find_element(by=By.CSS_SELECTOR, value='select[name="group"]').click()
-        wd.find_element(by=By.CSS_SELECTOR, value='select[name="group"] option[value="%s"]' % add_to_group.id).click()
-        self.select_contact_by_id(contact.id)
-        wd.find_element(by=By.CSS_SELECTOR, value='input[name="remove"]').click()
-        self.return_to_contact_page()
+        wd.find_element_by_css_selector('select[name="group"]').click()
+        wd.find_element_by_css_selector('select[name="group"] option[value="%s"]' % group.id).click()
+        id = contact.id
+        self.select_contact_by_id(id)
+        wd.find_element_by_css_selector('input[name="remove"]').click()

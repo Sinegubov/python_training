@@ -13,8 +13,9 @@ def test_modify_contact_fullname(app, db, check_ui):
     id = random_contact.id
     contact.id = id
     app.contact.modify_contact_by_id(random_contact.id, contact)
-    new_contacts = db.get_contact_list()
     assert len(old_contacts) == app.contact.count()
+    new_contacts = db.get_contact_list()
+    assert len(old_contacts) == len(new_contacts)
     for i in range(len(old_contacts)):
         if old_contacts[i].id == random_contact.id:
             old_contacts[i] = contact
