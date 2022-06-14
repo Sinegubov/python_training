@@ -8,22 +8,18 @@ def test_modify_contact_fullname(app, db, check_ui):
     contact = Contact(firstname="Some test Name", lastname="Some lastname new")
     if len(db.get_contact_list()) == 0:
         app.contact.create(contact)
-    old_contacts = db.get_contact_list()
-    random_contact = random.choice(old_contacts)
+    old_db_contacts = db.get_contact_list()
+    random_contact = random.choice(old_db_contacts)
     id = random_contact.id
     contact.id = id
     app.contact.modify_contact_by_id(random_contact.id, contact)
-    assert len(old_contacts) == app.contact.count()
-    new_contacts = db.get_contact_list()
-    assert len(old_contacts) == len(new_contacts)
-    for i in range(len(old_contacts)):
-        if old_contacts[i].id == random_contact.id:
-            old_contacts[i] = contact
-    assert sorted(old_contacts, key=Contact.id_or_max) == sorted(new_contacts, key=Contact.id_or_max)
+    assert len(old_db_contacts) == app.contact.count()
+    db_contacts = db.get_contact_list()
+    ui_contacts = app.contact.get_contact_list()
+    assert len(old_db_contacts) == len(db_contacts)
     if check_ui:
         assert sorted(new_contacts, key=Contact.id_or_max) == \
-               sorted(app.contact.get_contact_list(), key=Contact.id_or_max)
-
+               sorted(ui_contacts, key=Contact.id_or_max)
 
 def test_modify_contact_fullname_ui(app):
     contact = Contact(firstname="Some test Name", lastname="Some lastname new")
