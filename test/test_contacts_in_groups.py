@@ -2,9 +2,10 @@
 import random
 import data.contact
 import data.groups
+from data.groups import Group
 
 
-def test_add_contact_to_group(app, orm):
+def test_add_contact_to_group(app, db, orm):
     all_groups = orm.get_group_list()
     all_contacts = orm.get_contact_list()
     if not all_groups:
@@ -15,19 +16,20 @@ def test_add_contact_to_group(app, orm):
         all_contacts = orm.get_contact_list()
     group = random.choice(all_groups)
     contact = random.choice(all_contacts)
-    db_contacts_in_group = orm.get_contacts_in_group(group)
-    db_contacts_not_in_group = orm.get_contacts_not_in_group(group)
+    db_contacts_in_group = orm.get_contacts_in_group(Group(id=group.group_id))
+    db_contacts_not_in_group = orm.get_contacts_not_in_group(Group(id=group.id))
     # add_to_group, contact = orm.group_not_in_groups(all_groups, contact)
     if contact not in db_contacts_in_group:
-        app.contact.add_contact_to_group(contact, group)
+        app.contact.add_contact_to_group(contact.id, group.id)
     else:
         if db_contacts_not_in_group:
             contact = random.choice(db_contacts_not_in_group)
-            app.contact.add_contact_to_group(contact, group)
+            app.contact.add_contact_to_group(contact.id, group.id)
         else:
             if not db_contacts_not_in_group:
-                contact = app.contact.create(data.contact.testdata[0])
-                app.contact.add_contact_to_group(contact, group)
+                app.contact.create(data.contact.testdata[0])
+                contact = db.get_contact_list()[-1]
+                app.contact.add_contact_to_group(contact.id, group.id)
     old_list_contacts = orm.get_contacts_in_group(group)
     app.contact.add_contact_to_group(contact, group)
     new_list_contacts = orm.get_contacts_in_group(group)
