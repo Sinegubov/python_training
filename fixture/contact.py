@@ -236,3 +236,14 @@ class ContactHelper:
             contact = random.choice(db_contacts_not_in_group)
             self.add_contact_to_group(contact, group)
         return contact, group, old_list_contacts_in_group
+
+    def check_and_del_contact_from_group(self, db, orm):
+        group = random.choice(orm.get_group_list())
+        db_contacts_in_group = orm.get_contacts_in_group(group)
+        if db_contacts_in_group:
+            contact = random.choice(db_contacts_in_group)
+            self.del_contact_from_group(contact, group)
+        else:
+            contact, group, old_list_contacts_in_group = self.check_and_add_contact_to_group(orm, db)
+            self.del_contact_from_group(contact, group)
+        return contact, group
