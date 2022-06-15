@@ -9,22 +9,22 @@ def test_add_contact_to_group(app, db, orm):
         app.group.create(data.groups.testdata[0])
     if not orm.get_contact_list():
         app.contact.create(data.contact.testdata[0])
-    group = random.choice(orm.get_group_list())
-    db_contacts_not_in_group = orm.get_contacts_not_in_group(group)
-    old_list_contacts_in_group = orm.get_contacts_in_group(group)
-    if not db_contacts_not_in_group:
-        app.contact.create(data.contact.testdata[1])
-        contact = db.get_contact_list()[-1]
-        app.contact.add_contact_to_group(contact, group)
-    else:
-        contact = random.choice(db_contacts_not_in_group)
-        app.contact.add_contact_to_group(contact, group)
+    contact, group, old_list_contacts_in_group = app.contact.check_and_add_contact_to_group(orm, db)
     new_list_contacts_in_group = orm.get_contacts_in_group(group)
     assert contact in orm.get_contacts_in_group(group)
     assert len(old_list_contacts_in_group) + 1 == len(new_list_contacts_in_group)
 
 
+
+
+
 def test_del_contact_from_group(app, db, orm):
+    db_contacts_in_group = orm.get_contacts_in_group(group)
+    if not db_contacts_in_group:
+        app.contact.create(data.contact.testdata[1])
+        contact = db.get_contact_list()[-1]
+        app.contact.add_contact_to_group(contact, group)
+
     all_groups = db.get_group_list()
     all_contacts = db.get_contact_list()
     if not all_groups:

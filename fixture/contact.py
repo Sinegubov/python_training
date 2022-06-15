@@ -1,6 +1,9 @@
 from selenium.webdriver.common.by import By
+
+import data
 from model.contact import Contact
 import re
+import random
 
 
 class ContactHelper:
@@ -220,3 +223,16 @@ class ContactHelper:
         id = contact.id
         self.select_contact_by_id(id)
         wd.find_element_by_css_selector('input[name="remove"]').click()
+
+    def check_and_add_contact_to_group(self, orm, db):
+        group = random.choice(orm.get_group_list())
+        db_contacts_not_in_group = orm.get_contacts_not_in_group(group)
+        old_list_contacts_in_group = orm.get_contacts_in_group(group)
+        if not db_contacts_not_in_group:
+            self.create(data.contact.testdata[1])
+            contact = db.get_contact_list()[-1]
+            self.add_contact_to_group(contact, group)
+        else:
+            contact = random.choice(db_contacts_not_in_group)
+            self.add_contact_to_group(contact, group)
+        return contact, group, old_list_contacts_in_group
